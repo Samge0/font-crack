@@ -4,6 +4,8 @@
 # data：2023-02-28 9:26
 # describe：
 import hashlib
+import html
+
 from fontTools.ttLib import TTFont
 from utils import u_file
 try:
@@ -47,6 +49,8 @@ def format_unicode_lst(unicode_str: str, prefix: str= '') -> list:
     :param prefix:
     :return:
     """
+    # 兼容html格式字符
+    unicode_str = html.unescape(unicode_str)
     return [prefix+'{:X}'.format(ord(char)).lower() for char in unicode_str]
 
 
