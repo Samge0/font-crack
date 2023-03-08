@@ -140,3 +140,4 @@ DS_Store/
 # custom
 *.private.env.json
 config.json
+sg_test
