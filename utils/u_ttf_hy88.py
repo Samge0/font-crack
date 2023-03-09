@@ -16,34 +16,22 @@ except:
 
 # 黄页88字体反爬的映射信息
 num_dict = {
-    '88131': "0",
-    '88132': "1",
-    '88133': "2",
-    '88134': "3",
-    '88135': "4",
-    '88136': "5",
-    '88137': "6",
-    '88138': "7", 
-    '88139': "8",
-    '8813a': "9",
+    "numbersign": "#",
+    "asterisk": "*",
+    "plus": "+",
+    "hyphenminus": "-",
+    "slash": "/",
+    "zero": "0",
+    "one": "1",
+    "two": "2",
+    "three": "3",
+    "four": "4",
+    "five": "5",
+    "six": "6",
+    "seven": "7",
+    "eight": "8",
+    "nine": "9"
 }
-# num_dict = {
-#     "numbersign": "#",
-#     "asterisk": "*",
-#     "plus": "+",
-#     "hyphenminus": "-",
-#     "slash": "/",
-#     "zero": "0",
-#     "one": "1",
-#     "two": "2",
-#     "three": "3",
-#     "four": "4",
-#     "five": "5",
-#     "six": "6",
-#     "seven": "7",
-#     "eight": "8",
-#     "nine": "9"
-# }
 
 
 def get_num_value(char_string: str) -> str:
@@ -74,33 +62,6 @@ def format_unicode_lst(unicode_str: str, prefix: str = '') -> list:
 def decode_str(txt: str, font_base64: str, xml_node) -> (str, ET.Element):
     """
     字体反爬解密
-        黄页88的字体加密暂未发现变体，直接就是字符映射……
-    :param txt: 待处理的字符串
-    :param font_base64: 字体文件的base64
-    :param xml_node: 字体文件中的charStrings节点
-    :return:
-    """
-    result_value = None
-    try:
-        result_lst = []
-        unicode_lst = format_unicode_lst(txt) or []
-        keys = num_dict.keys()
-        for _char in unicode_lst:
-            if _char in keys:
-                result_lst.append(num_dict.get(_char))
-            else:
-                result_lst.append(chr(int(_char, 16)))  # 如果没命中，则转回源字符
-        result_value = ''.join(result_lst)
-        print(f"解析完成：{txt} => {result_value}")
-    except Exception as e:
-        print(e)
-    finally:
-        return result_value or txt, xml_node
-
-
-def decode_str_bak(txt: str, font_base64: str, xml_node) -> (str, ET.Element):
-    """
-    字体反爬解密
         黄页88的字体不涉及变体，这方法废弃
     :param txt: 待处理的字符串
     :param font_base64: 字体文件的base64
@@ -120,18 +81,31 @@ def decode_str_bak(txt: str, font_base64: str, xml_node) -> (str, ET.Element):
         xml_name = font_name.replace('.ttf', '.xml')
         font.saveXML(xml_name)
 
-        tmp_dict = {}
-        for cmap_item in font.tables.get('cmap').tables or []:
-            for k, v in cmap_item.cmap.items():
-                tmp_dict[f'{k}'] = v
-        tmp_dict = {k: v for k, v in sorted(tmp_dict.items(), key=lambda x: -len(x[0]))}
+        # 读取xml信息
+        font = TTFont(font_name)
+        xml_name = font_name.replace('.ttf', '.xml')
+        font.saveXML(xml_name)
+        # 读取XML文件
+        tree = ET.parse(xml_name)
+        root = tree.getroot()
+        # 遍历XML文档
+        map_dict = {}  # 字体code与name的映射字典
+        xml_node = get_xml_node(root, 'cmap') or []
+        for cmap in xml_node:
+            if not cmap.tag.startswith("cmap"):
+                continue
+            map_node = get_xml_node(cmap, 'map', is_lst=True) or []
+            for map_item in map_node:
+                code = str(map_item.get('code') or '').replace('0x', '')
+                name = str(map_item.get('name') or '')
+                map_dict[code] = name
 
         result_lst = []
         unicode_lst = format_unicode_lst(txt) or []
         for _char in unicode_lst:
             hit_char = False
-            for k, v in tmp_dict.items():
-                if str(k).endswith(_char):
+            for k, v in map_dict.items():
+                if _char.upper() == k.upper():
                     hit_char = True
                     num = get_num_value(v)
                     result_lst.append(num)
