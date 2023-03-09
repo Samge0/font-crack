@@ -2,14 +2,14 @@
 
 GET http://{{host}}:{{port}}/
 Accept: application/json
-Authorization: Bearer {{auth_token}}
+Authorization: Bearer {{access_token}}
 
 
 ### 测试 zg供应商 字体破解
 
 POST http://{{host}}:{{port}}/crack/font
 Content-Type: application/json
-Authorization: Bearer {{auth_token}}
+Authorization: Bearer {{access_token}}
 
 {
   "font_from": 7,
@@ -23,7 +23,7 @@ Authorization: Bearer {{auth_token}}
 
 POST http://{{host}}:{{port}}/crack/font
 Content-Type: application/json
-Authorization: Bearer {{auth_token}}
+Authorization: Bearer {{access_token}}
 
 {
   "font_from": 8,
