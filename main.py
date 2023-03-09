@@ -3,15 +3,16 @@
 # author：samge
 # data：2023-02-28 14:56
 # describe：
+import os
 
-from fastapi import Depends, FastAPI, Header, HTTPException
+from fastapi import Depends, FastAPI, Header
 
 from models.m_enum import FontFrom
 from models.m_ttf import TtfRequest
 from utils import u_http, u_ttf, u_file, u_ttf_hy88
 
 # api的简易token验证
-access_token = eval(u_file.read('config.json')).get('access_token')
+access_token = os.environ.get('ACCESS_TOKEN') or eval(u_file.read('config.json')).get('access_token')
 
 
 async def verify_token(Authorization: str = Header(...)):
