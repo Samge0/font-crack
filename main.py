@@ -11,7 +11,7 @@ from models.m_ttf import TtfRequest
 from utils import u_http, u_ttf, u_file, u_ttf_hy88
 
 # api的简易token验证
-access_token = eval(u_file.read('config.json')).get('auth_token')
+access_token = eval(u_file.read('config.json')).get('access_token')
 
 
 async def verify_token(Authorization: str = Header(...)):
