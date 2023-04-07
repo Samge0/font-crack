@@ -27,3 +27,6 @@ uvicorn run main:app --reload --host 0.0.0.0 --port 8000
 ### 技术交流
 - [Join Discord >>](https://discord.com/invite/eRuSqve8CE)
 - WeChat：`SamgeApp`
+
+### 免责声明
+该程序仅供技术交流，使用者所有行为与本项目作者无关
